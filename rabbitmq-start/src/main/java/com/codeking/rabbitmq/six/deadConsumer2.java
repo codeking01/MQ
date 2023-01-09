@@ -7,6 +7,8 @@ import com.rabbitmq.client.DeliverCallback;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -22,7 +24,9 @@ public class deadConsumer2 {
         channel.exchangeDeclare(DEAD_EXCHANGE, BuiltinExchangeType.DIRECT);
         // 声明队列
         String deadQueue = "dead_queue";
-        channel.queueDeclare(deadQueue, false, false, false, null);
+        Map<String, Object> params = new HashMap();
+        params.put("x-max-priority", 10);
+        channel.queueDeclare(deadQueue, false, false, false, params);
         // 绑定key
         channel.queueBind(deadQueue, DEAD_EXCHANGE, "dead_key");
         System.out.println("等待接收死信队列消息........... ");
